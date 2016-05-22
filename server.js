@@ -12,7 +12,7 @@ var wss = new WebSocketServer({ server: http });
 wss.on('connection', function (socket) {
 	var stream = websocket(socket);
 	pump(stream, docker('onedev/c'), stream);
-})
+});
 
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
