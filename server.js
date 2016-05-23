@@ -22,11 +22,9 @@ app.post('/guids/generate', function (req, res) {
     });
 });
 
-app.listen(3000, '127.0.0.1', function () {
-  console.log('listening on 127.0.0.1:3000');
-});
+app.listen(process.env.PORT || 3000, process.env.HOST || '127.0.0.1');
 
-var wss = new WebSocketServer({ port: 8081 });
+var wss = new WebSocketServer({ port: process.env.WEBSOCKET_PORT || 8081 });
 
 wss.on('connection', function (socket) {
   socket.once('message', function (guid) {
@@ -49,4 +47,4 @@ wss.on('connection', function (socket) {
   });
 });
 
-console.log('listening on 0.0.0.0:8081');
+console.log('Server started');
