@@ -2,7 +2,13 @@ var docker = require('docker-browser-console');
 var websocket = require('websocket-stream');
 var pump = require('pump');
 
-var terminal = docker();
+window.terminal = {};
 
-pump(terminal, websocket('ws://' + location.host), terminal);
-terminal.appendTo(document.getElementById('console'));
+window.terminal.attach = function (path, guid, elem) {
+  var terminal = docker();
+
+  var ws = websocket('ws://' + path);
+  ws.write(new Buffer(guid));
+  pump(terminal, ws, terminal);
+  terminal.appendTo(elem);
+};
