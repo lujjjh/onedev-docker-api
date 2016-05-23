@@ -1,13 +1,16 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var Guid = require('guid');
-var docker = require('./docker-browser-console');
+var dockerConsole = require('./docker-browser-console');
 var WebSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
 var pump = require('pump');
 var redis = require("redis").createClient();
 var ndjson = require('ndjson');
 var duplexify = require('duplexify');
+var Docker = require('dockerode');
+var docker = new Docker();
+var mkdirp = require('mkdirp');
 
 var REDIS_GUID_PREFIX = 'onedev.docker.api.';
 
@@ -30,7 +33,7 @@ var wss = new WebSocketServer({ port: process.env.WEBSOCKET_PORT || 8081 });
 
 wss.on('connection', function (socket) {
   var stream = websocket(socket);
-  pump(stream, docker(getOpts), stream);
+  pump(stream, dockerConsole(getOpts), stream);
 
   function getOpts(guid, callback) {
     redis.get(REDIS_GUID_PREFIX + guid, function (err, options) {
@@ -39,6 +42,9 @@ wss.on('connection', function (socket) {
         return;
       }
       options = JSON.parse(options);
+      for (var container in options.volumes || {}) {
+        mkdirp.sync(options.volumes[container].replace(/:[rw]+$/, ''));
+      }
       callback(options);
     });
   }
