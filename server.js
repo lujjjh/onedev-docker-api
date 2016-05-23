@@ -42,8 +42,8 @@ wss.on('connection', function (socket) {
         return;
       }
       options = JSON.parse(options);
-      for (var container in options.volumes || {}) {
-        mkdirp.sync(options.volumes[container].replace(/:[rw]+$/, ''));
+      for (var host in options.volumes || {}) {
+        mkdirp.sync(host);
       }
       callback(options);
     });
