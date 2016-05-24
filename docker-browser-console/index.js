@@ -1,6 +1,6 @@
 var duplexify = require('duplexify')
 var ndjson = require('ndjson')
-var run = require('docker-run')
+var run = require('../docker-run')
 var xtend = require('xtend')
 
 module.exports = function(opts) {
