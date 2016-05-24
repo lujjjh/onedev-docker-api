@@ -75,6 +75,10 @@ var run = function(image, opts) {
     })
   }
 
+  if (opts.workdir) {
+    copts.WorkingDir = opts.workdir
+  }
+
   that.stdin = opts.fork ? null : through()
   that.stderr = opts.fork ? null : through()
   that.stdout = opts.fork ? null : through()
