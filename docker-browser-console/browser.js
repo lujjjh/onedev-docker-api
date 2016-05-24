@@ -78,6 +78,10 @@ module.exports = function(opts) {
       guid: opts.guid || ''
     })
 
+    var pingTimer = setInterval(function () {
+      output.write({ type: 'ping' })
+    }, 10000)
+
     input.on('data', function(data) {
       if (data.type !== 'stderr' && data.type !== 'stdout') return
       term.write(data.data)
@@ -100,6 +104,7 @@ module.exports = function(opts) {
     result.on('close', function() {
       off(window, 'resize', onresize)
       term.destroy()
+      clearInterval(pingTimer)
     })
 
     return result

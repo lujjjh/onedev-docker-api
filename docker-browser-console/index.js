@@ -24,6 +24,7 @@ module.exports = function(opts) {
       input.on('data', function(data) {
         if (data.type === 'resize') child.resize(data.width, data.height)
         if (data.type === 'stdin') child.stdin.write(data.data)
+        if (data.type === 'ping') output.write({ 'type': 'pong' })
       })
 
       child.stdout.on('data', function(data) {
