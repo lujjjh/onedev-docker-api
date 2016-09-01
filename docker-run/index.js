@@ -19,11 +19,6 @@ var run = function(image, opts) {
   var tty = !!opts.tty
 
   var sopts = {
-    NetworkMode: opts.net === 'auto' ? (opts.ports ? 'bridge' : 'host') : opts.net,
-    PortBindings: {},
-    Binds: [],
-    Links: [],
-    Privileged: !!opts.privileged
   }
 
   var copts = {
@@ -37,10 +32,15 @@ var run = function(image, opts) {
     Image: image,
     ExposedPorts: {},
     Env: [],
-    Volumes: {}
+    Volumes: {},
+    NetworkMode: opts.net === 'auto' ? (opts.ports ? 'bridge' : 'host') : opts.net,
+    PortBindings: {},
+    Binds: [],
+    Links: [],
+    Privileged: !!opts.privileged
   }
 
-  if (opts.dns) sopts.Dns = [].concat(opts.dns)
+  if (opts.dns) copts.Dns = [].concat(opts.dns)
   if (opts.entrypoint) copts.Entrypoint = [].concat(opts.entrypoint)
 
   if (opts.ports) {
@@ -48,7 +48,7 @@ var run = function(image, opts) {
       var container = opts.ports[host]
       if (!/\//.test(container)) container += '/tcp'
       copts.ExposedPorts[container] = {}
-      sopts.PortBindings[container] = [{HostPort:host+''}]
+      copts.PortBindings[container] = [{HostPort:host+''}]
     })
   }
 
@@ -65,13 +65,13 @@ var run = function(image, opts) {
 
       if(!endsWith(container, ':rw') || !endsWith(container, ':ro')) container += ':rw'
 
-      sopts.Binds.push(host+':'+container)
+      copts.Binds.push(host+':'+container)
     })
   }
 
   if (opts.links) {
     Object.keys(opts.links).forEach(function(name) {
-      sopts.Links.push(name+':'+opts.links[name])
+      copts.Links.push(name+':'+opts.links[name])
     })
   }
 

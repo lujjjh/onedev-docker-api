@@ -3,7 +3,7 @@ var ndjson = require('ndjson')
 var run = require('../docker-run')
 var xtend = require('xtend')
 
-module.exports = function(opts) {
+module.exports = function(opts, callback) {
   var input = ndjson.parse()
   var output = ndjson.stringify()
   var result = duplexify()
@@ -20,6 +20,8 @@ module.exports = function(opts) {
         width: handshake.width,
         height: handshake.height
       }))
+
+      callback(child)
 
       input.on('data', function(data) {
         if (data.type === 'resize') child.resize(data.width, data.height)
